@@ -101,9 +101,8 @@ public class AuthController {
   @ErrorResponse
   @PostMapping("/login")
   @ResponseBody
-  public ResponseEntity<AuthResponseDTO> login(
-      @Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-    AuthResponseDTO loginResponseDTO = authService.login(loginRequestDTO);
+  public ResponseEntity<Object> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    Object loginResponseDTO = authService.login(loginRequestDTO);
     return ResponseEntity.ok().body(loginResponseDTO);
   }
 
@@ -198,5 +197,13 @@ public class AuthController {
       @Valid @RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO) {
     authService.forgotPassword(forgotPasswordRequestDTO);
     return ResponseEntity.ok().body("Send reset password email successfully");
+  }
+
+  @PostMapping("/login-challenge")
+  @ResponseBody
+  public ResponseEntity<AuthResponseDTO> loginWith2FAChallenge(
+      @RequestParam("code") String code, @RequestParam("pendingToken") String pending) {
+
+    return ResponseEntity.ok(authService.loginChallenge(code, pending));
   }
 }

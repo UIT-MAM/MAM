@@ -13,18 +13,23 @@ import com.se114p12.backend.dtos.authentication.PasswordChangeDTO;
 import com.se114p12.backend.dtos.authentication.RefreshTokenRequestDTO;
 import com.se114p12.backend.dtos.authentication.SendOTPRequestDTO;
 import com.se114p12.backend.dtos.authentication.SendVerifyEmailRequestDTO;
+import com.se114p12.backend.dtos.authentication.TwoFAChallenge;
 import com.se114p12.backend.dtos.authentication.VerifyOTPRequestDTO;
 import com.se114p12.backend.entities.authentication.RefreshToken;
+import com.se114p12.backend.entities.authentication.User2FA;
 import com.se114p12.backend.entities.authentication.Verification;
 import com.se114p12.backend.entities.user.User;
+import com.se114p12.backend.enums.TwoFAMethod;
 import com.se114p12.backend.enums.UserStatus;
 import com.se114p12.backend.enums.VerificationType;
 import com.se114p12.backend.exceptions.BadRequestException;
 import com.se114p12.backend.exceptions.ResourceNotFoundException;
 import com.se114p12.backend.mappers.user.UserMapper;
+import com.se114p12.backend.repositories.authentication.User2FARepository;
 import com.se114p12.backend.repositories.authentication.UserRepository;
 import com.se114p12.backend.services.general.MailService;
 import com.se114p12.backend.util.JwtUtil;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -45,9 +50,10 @@ public class AuthServiceImpl implements AuthService {
   private final UserRepository userRepository;
   private final VerificationService verificationService;
   private final MailService mailService;
+  private final User2FARepository user2FARepository;
 
   @Override
-  public AuthResponseDTO login(LoginRequestDTO loginRequestDTO) {
+  public Object login(LoginRequestDTO loginRequestDTO) {
 
     UsernamePasswordAuthenticationToken authenticationToken =
         new UsernamePasswordAuthenticationToken(
@@ -59,6 +65,22 @@ public class AuthServiceImpl implements AuthService {
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     Long userId = jwtUtil.getCurrentUserId();
+
+    // Check if user has 2FA enabled
+    List<User2FA> user2FAs =
+        user2FARepository.findAll(
+            (root, _, builder) ->
+                builder.and(
+                    builder.equal(root.get("user").get("id"), userId),
+                    builder.isTrue(root.get("isEnabled"))));
+    if (!user2FAs.isEmpty()) {
+      List<TwoFAMethod> methods = user2FAs.stream().map(User2FA::getMethod).toList();
+      String token = verificationService.createTwoFactorVerification(userId).getCode();
+      TwoFAChallenge twoFAChallenge = new TwoFAChallenge();
+      twoFAChallenge.setMethods(methods);
+      twoFAChallenge.setToken(token);
+      return twoFAChallenge;
+    }
 
     String accessToken = jwtUtil.generateAccessToken(userId);
 
@@ -223,5 +245,30 @@ public class AuthServiceImpl implements AuthService {
     }
     Verification verification = verificationService.createActivationVerification(user.getId());
     mailService.sendActivationEmail(user.getEmail(), verification.getCode());
+  }
+
+  @Override
+  public AuthResponseDTO loginChallenge(String code, String pendingToken) {
+    Verification verification =
+        verificationService.verifyVerificationCode(pendingToken, VerificationType.TWO_FACTOR);
+
+    Long userId = verification.getUser().getId();
+
+    String accessToken = jwtUtil.generateAccessToken(userId);
+
+    String refreshToken = refreshTokenService.generateRefreshToken(userId).getToken();
+
+    AuthResponseDTO loginResponseDTO = new AuthResponseDTO();
+    loginResponseDTO.setAccessToken(accessToken);
+    loginResponseDTO.setRefreshToken(refreshToken);
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    loginResponseDTO.setUser(userMapper.entityToResponse(user));
+
+    verificationService.deleteVerification(verification);
+
+    return loginResponseDTO;
   }
 }

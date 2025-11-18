@@ -38,6 +38,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 authorize
                     .requestMatchers(
                         "/api/v1/auth/login",
+                        "/api/v1/auth/login-challenge",
                         "/api/v1/auth/oauth2/register/google",
                         "/api/v1/auth/oauth2/login/google",
                         "/api/v1/auth/oauth2/register/firebase",
@@ -86,15 +87,15 @@ public class SecurityConfig implements WebMvcConfigurer {
         .addInterceptor(appInterceptor())
         .addPathPatterns("/api/v1/**")
         .excludePathPatterns(
-            "/api/v1/authentication/login",
-            "/api/v1/authentication/me",
-            "/api/v1/authentication/oauth2/register/google",
-            "/api/v1/authentication/oauth2/login/google",
-            "/api/v1/authentication/oauth2/register/firebase",
-            "/api/v1/authentication/oauth2/login/firebase",
-            "/api/v1/authentication/register",
-            "/api/v1/authentication/refresh",
-            "/api/v1/authentication/forgot-password",
+            "/api/v1/auth/login",
+            "/api/v1/auth/me",
+            "/api/v1/auth/oauth2/register/google",
+            "/api/v1/auth/oauth2/login/google",
+            "/api/v1/auth/oauth2/register/firebase",
+            "/api/v1/auth/oauth2/login/firebase",
+            "/api/v1/auth/register",
+            "/api/v1/auth/refresh",
+            "/api/v1/auth/forgot-password",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html");

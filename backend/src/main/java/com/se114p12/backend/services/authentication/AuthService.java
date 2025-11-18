@@ -13,7 +13,7 @@ import com.se114p12.backend.dtos.authentication.VerifyOTPRequestDTO;
 
 public interface AuthService {
 
-  AuthResponseDTO login(LoginRequestDTO loginRequestDTO);
+  Object login(LoginRequestDTO loginRequestDTO);
 
   AuthResponseDTO loginWithGoogle(GoogleLoginRequestDTO googleLoginRequestDTO);
 
@@ -34,4 +34,6 @@ public interface AuthService {
   String verifyOtp(VerifyOTPRequestDTO verifyOTPRequestDTO);
 
   void forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO);
+
+  AuthResponseDTO loginChallenge(String code, String pendingToken);
 }
