@@ -91,7 +91,7 @@ public class NotificationController {
     @ErrorResponse
     @PutMapping("/read/{id}")
     public ResponseEntity<Void> markAsRead(
-            @Parameter(description = "Notification ID to mark as read") @PathVariable Long id) {
+            @Parameter(description = "Notification ID to mark as read") @PathVariable("id") Long id) {
         Long userId = jwtUtil.getCurrentUserId();
         notificationService.markAsRead(userId, id);
         return ResponseEntity.ok().build();
@@ -105,7 +105,7 @@ public class NotificationController {
     @ErrorResponse
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @Parameter(description = "Notification ID to delete") @PathVariable Long id) {
+            @Parameter(description = "Notification ID to delete") @PathVariable("id") Long id) {
         notificationService.deleteNotification(id);
         return ResponseEntity.noContent().build();
     }

@@ -62,7 +62,7 @@ public class PromotionController {
       })
   @ErrorResponse
   @GetMapping("/{id}")
-  public ResponseEntity<PromotionResponseDTO> getPromotionById(@PathVariable Long id) {
+  public ResponseEntity<PromotionResponseDTO> getPromotionById(@PathVariable("id") Long id) {
     return ResponseEntity.ok(promotionService.findById(id));
   }
 
@@ -96,7 +96,7 @@ public class PromotionController {
   @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/{id}")
   public ResponseEntity<PromotionResponseDTO> updatePromotion(
-      @PathVariable Long id, @Valid @RequestBody PromotionRequestDTO dto) {
+      @PathVariable("id") Long id, @Valid @RequestBody PromotionRequestDTO dto) {
     return ResponseEntity.ok(promotionService.update(id, dto));
   }
 
@@ -112,7 +112,7 @@ public class PromotionController {
   @ErrorResponse
   @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deletePromotion(@PathVariable Long id) {
+  public ResponseEntity<Void> deletePromotion(@PathVariable("id") Long id) {
     promotionService.delete(id);
     return ResponseEntity.ok().build();
   }

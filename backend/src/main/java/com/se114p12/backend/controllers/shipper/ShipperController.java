@@ -69,7 +69,7 @@ public class ShipperController {
   @ErrorResponse
   @GetMapping("/{id}")
   public ResponseEntity<ShipperResponse> getById(
-      @Parameter(description = "Shipper ID") @PathVariable Long id) {
+      @Parameter(description = "Shipper ID") @PathVariable("id") Long id) {
     return ResponseEntity.ok(shipperService.getById(id));
   }
 
@@ -81,7 +81,7 @@ public class ShipperController {
   @ErrorResponse
   @PutMapping("/{id}")
   public ResponseEntity<ShipperResponse> update(
-      @Parameter(description = "Shipper ID") @PathVariable Long id,
+      @Parameter(description = "Shipper ID") @PathVariable("id") Long id,
       @RequestBody ShipperRequest request) {
     return ResponseEntity.ok(shipperService.update(id, request));
   }
@@ -94,7 +94,7 @@ public class ShipperController {
       })
   @ErrorResponse
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@Parameter(description = "Shipper ID") @PathVariable Long id) {
+  public ResponseEntity<Void> delete(@Parameter(description = "Shipper ID") @PathVariable("id") Long id) {
     shipperService.delete(id);
     return ResponseEntity.noContent().build();
   }

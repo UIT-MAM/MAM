@@ -81,7 +81,7 @@ public class VariationOptionController {
   @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/{id}")
   public ResponseEntity<VariationOptionResponseDTO> update(
-      @Parameter(description = "ID of the variation option to update") @PathVariable Long id,
+      @Parameter(description = "ID of the variation option to update") @PathVariable("id") Long id,
       @Valid @RequestBody VariationOptionRequestDTO dto) {
     return ResponseEntity.ok(variationOptionService.update(id, dto));
   }
@@ -98,7 +98,7 @@ public class VariationOptionController {
   @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(
-      @Parameter(description = "ID of the variation option to delete") @PathVariable Long id) {
+      @Parameter(description = "ID of the variation option to delete") @PathVariable("id") Long id) {
     variationOptionService.delete(id);
     return ResponseEntity.noContent().build();
   }

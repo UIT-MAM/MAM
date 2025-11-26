@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.TYPE})
 @ApiResponse(
-    responseCode = "400 ~ 500",
+    responseCode = "400",
     description = "Error response",
     content =
         @Content(

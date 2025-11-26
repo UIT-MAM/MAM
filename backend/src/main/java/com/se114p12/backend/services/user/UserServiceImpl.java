@@ -111,13 +111,13 @@ public class UserServiceImpl implements UserService {
     user.setPhone(SMSService.formatPhoneNumber(registerRequestDTO.getPhone()));
     user.setStatus(UserStatus.PENDING);
     user.setLoginProvider(LoginProvider.LOCAL);
-    User savedUser = userRepository.save(user);
-
-    Role userRole =
+        Role userRole =
         roleRepository
-            .findByName("USER")
-            .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
-    user.setRole(userRole);
+        .findByName("USER")
+        .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+        user.setRole(userRole);
+
+    User savedUser = userRepository.save(user);
 
     // verify email
     Verification verification = verificationService.createActivationVerification(savedUser.getId());

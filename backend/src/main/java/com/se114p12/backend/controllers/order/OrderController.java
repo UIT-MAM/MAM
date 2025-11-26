@@ -134,7 +134,7 @@ public class OrderController {
   @ApiResponse(responseCode = "200", description = "Order marked as delivered")
   @ErrorResponse
   @PutMapping("/{orderId}/delivered")
-  public ResponseEntity<String> markOrderAsDelivered(@PathVariable Long orderId) {
+  public ResponseEntity<String> markOrderAsDelivered(@PathVariable("orderId") Long orderId) {
     orderService.markOrderAsDelivered(orderId);
     return ResponseEntity.ok("Order marked as delivered.");
   }

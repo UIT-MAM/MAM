@@ -27,10 +27,10 @@ public class DataInitializer implements ApplicationRunner {
     roleInitializer.initializeRoles();
 
     // Initialize users
-    userInitializer.initializeAdminUser(
-        roleRepository
-            .findByName(RoleName.ADMIN.getValue())
-            .orElseThrow(() -> new IllegalStateException("Admin role not found")));
+    // userInitializer.initializeAdminUser(
+    //     roleRepository
+    //         .findByName(RoleName.ADMIN.getValue())
+    //         .orElseThrow(() -> new IllegalStateException("Admin role not found")));
 
     // categoryInitializer.initializeCategories();
     // shipperInitializer.initializeShippers();
