@@ -78,6 +78,7 @@ fun ProfileScreen(
     onLogoutClicked: () -> Unit = {},
     onBackClicked: () -> Unit = {},
     onHistoryClicked: () -> Unit = {},
+    onTwoFaClicked: () -> Unit,
     isAdmin: Boolean = false,
     viewModel: ProfileViewModel
     ) {
@@ -278,6 +279,13 @@ fun ProfileScreen(
                     OuterShadowFilledButton(
                         text = "Đổi mật khẩu",
                         onClick = onChangePasswordClicked,
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .height(40.dp)
+                    )
+                    OuterShadowFilledButton(
+                        text = "Xác thực 2 yếu tố (2FA)",
+                        onClick = onTwoFaClicked,
                         modifier = Modifier
                             .wrapContentWidth()
                             .height(40.dp)

@@ -13,6 +13,7 @@ import com.example.mam.repository.ProductRepository
 import com.example.mam.repository.PromotionRepository
 import com.example.mam.repository.ShipperRepository
 import com.example.mam.repository.StastiticRepository
+import com.example.mam.repository.TwoFaRepository
 import com.example.mam.repository.UserPromotionRepository
 import com.example.mam.repository.UserRepository
 import com.example.mam.repository.VariationOptionRepository
@@ -26,6 +27,10 @@ class BaseRepository(userPreferencesRepository: UserPreferencesRepository) {
     // Các service sẽ được khởi tạo ở đây, sử dụng lazy để chỉ khởi tạo khi cần thiết
     val authPublicRepository: AuthPublicRepository by lazy {
         publicRetrofit.create(AuthPublicRepository::class.java) }
+
+    val twoFaRepository: TwoFaRepository by lazy {
+        privateRetrofit.create(TwoFaRepository::class.java)
+    }
 
     val authPrivateRepository: AuthPrivateRepository by lazy {
         privateRetrofit.create(AuthPrivateRepository::class.java) }

@@ -25,9 +25,12 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.example.mam.screen.authentication.ForgetPasswordScreen
 import com.example.mam.screen.authentication.OTPScreen
+import com.example.mam.screen.authentication.RecoveryCodeScreen
+import com.example.mam.screen.authentication.SetupTwoFaScreen
 import com.example.mam.screen.authentication.SignInScreen
 import com.example.mam.screen.authentication.SignUpScreen
 import com.example.mam.screen.authentication.StartScreen
+import com.example.mam.screen.authentication.VerifyTwoFaScreen
 import com.example.mam.screen.client.CartScreen
 import com.example.mam.screen.client.CheckOutScreen
 import com.example.mam.screen.client.HomeScreen
@@ -81,6 +84,7 @@ import com.example.mam.viewmodel.management.ManageProductViewModel
 import com.example.mam.viewmodel.management.ManagePromotionViewModel
 import com.example.mam.viewmodel.management.ManageShipperViewModel
 import com.example.mam.viewmodel.management.ManageUserViewModel
+import com.example.mam.viewmodel.twofa.TwoFaViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.plcoding.composeotpinput.OtpViewModel
 import com.yourapp.ui.notifications.NotificationScreen
@@ -273,6 +277,76 @@ fun MainNavHost(
                         navController.popBackStack()
                     },
                     viewModel = viewModel,
+                )
+            }
+            composable(
+                route = AuthenticationScreen.TwoFaSetup.name,
+                enterTransition = defaultTransitions(),
+                exitTransition = defaultExitTransitions(),
+                popEnterTransition = defaultPopEnterTransitions(),
+                popExitTransition = defaultPopExitTransitions()
+            ) { backStackEntry ->
+                // Khởi tạo ViewModel (Giả sử bạn đã tạo Factory như các màn hình khác)
+                val viewModel: TwoFaViewModel = viewModel(backStackEntry, factory = TwoFaViewModel.Factory)
+
+                SetupTwoFaScreen(
+                    viewModel = viewModel,
+                    onBackClicked = { navController.popBackStack() },
+                    onNextClicked = { secretKey ->
+                        // Chuyển sang màn Verify, truyền theo secretKey nếu cần thiết
+                        // Hoặc nếu dùng chung ViewModel thì không cần truyền
+                        navController.navigate("${AuthenticationScreen.TwoFaVerify.name}/$secretKey")
+                    }
+                )
+            }
+
+            composable(
+                route = "${AuthenticationScreen.TwoFaVerify.name}/{secretKey}", // Nhận secretKey từ màn trước
+                arguments = listOf(navArgument("secretKey") { type = NavType.StringType }),
+                enterTransition = defaultTransitions(),
+                exitTransition = defaultExitTransitions(),
+                popEnterTransition = defaultPopEnterTransitions(),
+                popExitTransition = defaultPopExitTransitions()
+            ) { backStackEntry ->
+                val viewModel: TwoFaViewModel = viewModel(backStackEntry, factory = TwoFaViewModel.Factory)
+
+                // Lấy secretKey từ Argument để ViewModel xử lý
+                val secretKey = backStackEntry.arguments?.getString("secretKey") ?: ""
+                LaunchedEffect(secretKey) {
+                    viewModel.setSecretKey(secretKey)
+                }
+
+                VerifyTwoFaScreen(
+                    viewModel = viewModel,
+                    onBackClicked = { navController.popBackStack() },
+                    onSuccess = {
+                        // Xác thực thành công -> Sang màn lưu mã khôi phục
+                        navController.navigate(AuthenticationScreen.TwoFaRecovery.name) {
+                            // Xóa màn hình Setup và Verify khỏi backstack để user không back lại được
+                            popUpTo(AuthenticationScreen.TwoFaSetup.name) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            composable(
+                route = AuthenticationScreen.TwoFaRecovery.name,
+                enterTransition = defaultTransitions(),
+                exitTransition = defaultExitTransitions(),
+                popEnterTransition = defaultPopEnterTransitions(),
+                popExitTransition = defaultPopExitTransitions()
+            ) { backStackEntry ->
+                val viewModel: TwoFaViewModel = viewModel(backStackEntry, factory = TwoFaViewModel.Factory)
+
+                RecoveryCodeScreen(
+                    viewModel = viewModel,
+                    onDoneClicked = {
+                        // Hoàn tất -> Về màn hình Profile hoặc Home
+                        navController.navigate("Profile") {
+                            // Xóa toàn bộ luồng 2FA khỏi backstack
+                            popUpTo("Profile") { inclusive = true }
+                        }
+                    }
                 )
             }
         }

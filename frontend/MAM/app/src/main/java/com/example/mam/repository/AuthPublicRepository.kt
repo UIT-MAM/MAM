@@ -21,6 +21,12 @@ import retrofit2.http.Query
 interface AuthPublicRepository {
     @POST("auth/login")
     suspend fun login(@Body request: SignInRequest): Response<AuthResponse>
+
+    @POST("auth/login-challenge")
+    suspend fun loginChallenge(
+        @Query("code") code: String,
+        @Query("pendingToken") pendingToken: String
+    ): Response<AuthResponse>
     @POST("auth/register")
     suspend fun signUp(@Body request: SignUpRequest): Response<UserResponse>
     @POST("auth/send-otp")

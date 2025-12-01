@@ -375,7 +375,7 @@ fun CircleIconButton(
     isBadges: Boolean = false,
     badgesCount: Int = 0,
     onClick: () -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier
 ){
     BadgedBox(
         badge = {
