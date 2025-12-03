@@ -1,5 +1,6 @@
 package com.se114p12.backend.controllers.authentication;
 
+import com.se114p12.backend.constants.AppConstant;
 import com.se114p12.backend.dtos.authentication.TwoFASetupResponseDTO;
 import com.se114p12.backend.dtos.authentication.VerifySetup2FAResponseDTO;
 import com.se114p12.backend.enums.TwoFAMethod;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "2FA Module", description = "Quản lý xác thực hai yếu tố")
-@RequestMapping("/2fa")
+@RequestMapping(AppConstant.API_BASE_PATH + "/2fa")
 @RequiredArgsConstructor
 @RestController
 public class TwoFAController {

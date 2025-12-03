@@ -24,7 +24,7 @@ import com.example.mam.component.OuterShadowFilledButton
 import com.example.mam.component.newOtpInputField
 import com.example.mam.ui.theme.OrangeDefault
 import com.example.mam.ui.theme.WhiteDefault
-import com.example.mam.viewmodel.twofa.TwoFaViewModel
+import com.example.mam.viewmodel.authentication.TwoFaViewModel
 import kotlinx.coroutines.launch
 
 @Composable

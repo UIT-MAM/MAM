@@ -93,4 +93,6 @@ dependencies {
     implementation("androidx.paging:paging-compose:1.0.0-alpha20")
     implementation ("androidx.paging:paging-runtime:3.3.6")
     implementation ("androidx.paging:paging-compose:3.3.6")
+
+    implementation("com.google.zxing:core:3.5.2") // Thư viện tạo mã QR
 }

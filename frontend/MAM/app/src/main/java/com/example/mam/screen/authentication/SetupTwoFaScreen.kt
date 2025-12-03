@@ -31,7 +31,8 @@ import com.example.mam.component.CircleIconButton
 import com.example.mam.component.OuterShadowFilledButton
 import com.example.mam.ui.theme.OrangeDefault
 import com.example.mam.ui.theme.WhiteDefault
-import com.example.mam.viewmodel.twofa.TwoFaViewModel // Import ViewModel
+import com.example.mam.utils.rememberQrBitmap
+import com.example.mam.viewmodel.authentication.TwoFaViewModel // Import ViewModel
 
 @Composable
 fun SetupTwoFaScreen(
@@ -103,14 +104,30 @@ fun SetupTwoFaScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Hiển thị QR Code từ URL
-                    if (state.qrCodeUrl.isNotEmpty()) {
-                        Image(
-                            painter = rememberAsyncImagePainter(state.qrCodeUrl),
-                            contentDescription = "QR Code",
-                            modifier = Modifier.size(200.dp),
-                            contentScale = ContentScale.Fit
-                        )
+                    val qrCodeContent = state.qrCodeUrl // Lấy nội dung từ server
+                    if (qrCodeContent.isNotEmpty()) {
+                        // Tạo ảnh Bitmap từ chuỗi text
+                        val qrBitmap = rememberQrBitmap(content = qrCodeContent)
+
+                        if (qrBitmap != null) {
+                            Image(
+                                bitmap = qrBitmap, // Dùng bitmap thay vì painter
+                                contentDescription = "QR Code",
+                                modifier = Modifier
+                                    .size(200.dp)
+                                    .background(Color.White) // Đảm bảo nền trắng để dễ quét
+                                    .padding(10.dp),         // Padding một chút
+                                contentScale = ContentScale.Fit
+                            )
+                        } else {
+                            // Trường hợp tạo lỗi
+                            Text("Không thể tạo mã QR", color = Color.Red)
+                        }
+                    } else {
+                        // Trường hợp đang tải hoặc chuỗi rỗng
+                        if (state.isLoading) {
+                            CircularProgressIndicator()
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))

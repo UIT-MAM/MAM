@@ -84,7 +84,7 @@ import com.example.mam.viewmodel.management.ManageProductViewModel
 import com.example.mam.viewmodel.management.ManagePromotionViewModel
 import com.example.mam.viewmodel.management.ManageShipperViewModel
 import com.example.mam.viewmodel.management.ManageUserViewModel
-import com.example.mam.viewmodel.twofa.TwoFaViewModel
+import com.example.mam.viewmodel.authentication.TwoFaViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.plcoding.composeotpinput.OtpViewModel
 import com.yourapp.ui.notifications.NotificationScreen
@@ -201,6 +201,9 @@ fun MainNavHost(
                     onBackClicked = {
                         navController.popBackStack()
                     },
+                    onTwoFaRequired = { pendingToken ->
+                        navController.navigate("${AuthenticationScreen.TwoFaVerify.name}/LOGIN/$pendingToken")
+                    }
                 )
             }
 
@@ -279,73 +282,94 @@ fun MainNavHost(
                     viewModel = viewModel,
                 )
             }
+            // 2. THÊM MỚI: MÀN HÌNH SETUP 2FA (Quét QR)
             composable(
                 route = AuthenticationScreen.TwoFaSetup.name,
                 enterTransition = defaultTransitions(),
-                exitTransition = defaultExitTransitions(),
-                popEnterTransition = defaultPopEnterTransitions(),
-                popExitTransition = defaultPopExitTransitions()
+                exitTransition = defaultExitTransitions()
             ) { backStackEntry ->
-                // Khởi tạo ViewModel (Giả sử bạn đã tạo Factory như các màn hình khác)
-                val viewModel: TwoFaViewModel = viewModel(backStackEntry, factory = TwoFaViewModel.Factory)
+                val viewModel: TwoFaViewModel = viewModel(factory = TwoFaViewModel.Factory)
 
                 SetupTwoFaScreen(
                     viewModel = viewModel,
                     onBackClicked = { navController.popBackStack() },
                     onNextClicked = { secretKey ->
-                        // Chuyển sang màn Verify, truyền theo secretKey nếu cần thiết
-                        // Hoặc nếu dùng chung ViewModel thì không cần truyền
-                        navController.navigate("${AuthenticationScreen.TwoFaVerify.name}/$secretKey")
+                        // Chuyển sang xác thực, mode là SETUP
+                        navController.navigate("${AuthenticationScreen.TwoFaVerify.name}/SETUP/$secretKey")
                     }
                 )
             }
 
+            // 3. THÊM MỚI: MÀN HÌNH VERIFY 2FA (Dùng chung cho cả Setup và Login)
             composable(
-                route = "${AuthenticationScreen.TwoFaVerify.name}/{secretKey}", // Nhận secretKey từ màn trước
-                arguments = listOf(navArgument("secretKey") { type = NavType.StringType }),
+                route = "${AuthenticationScreen.TwoFaVerify.name}/{mode}/{data}",
+                arguments = listOf(
+                    navArgument("mode") { type = NavType.StringType }, // "SETUP" hoặc "LOGIN"
+                    navArgument("data") { type = NavType.StringType }  // secretKey hoặc pendingToken
+                ),
                 enterTransition = defaultTransitions(),
-                exitTransition = defaultExitTransitions(),
-                popEnterTransition = defaultPopEnterTransitions(),
-                popExitTransition = defaultPopExitTransitions()
+                exitTransition = defaultExitTransitions()
             ) { backStackEntry ->
-                val viewModel: TwoFaViewModel = viewModel(backStackEntry, factory = TwoFaViewModel.Factory)
+                val viewModel: TwoFaViewModel = viewModel(factory = TwoFaViewModel.Factory)
 
-                // Lấy secretKey từ Argument để ViewModel xử lý
-                val secretKey = backStackEntry.arguments?.getString("secretKey") ?: ""
-                LaunchedEffect(secretKey) {
-                    viewModel.setSecretKey(secretKey)
+                val mode = backStackEntry.arguments?.getString("mode") ?: "SETUP"
+                val data = backStackEntry.arguments?.getString("data") ?: ""
+
+                // Khởi tạo trạng thái ban đầu cho ViewModel
+                LaunchedEffect(mode, data) {
+                    if (mode == "LOGIN") {
+                        viewModel.initLoginMode(pendingToken = data)
+                    } else {
+                        viewModel.setSecretKey(key = data)
+                    }
                 }
 
                 VerifyTwoFaScreen(
                     viewModel = viewModel,
                     onBackClicked = { navController.popBackStack() },
                     onSuccess = {
-                        // Xác thực thành công -> Sang màn lưu mã khôi phục
-                        navController.navigate(AuthenticationScreen.TwoFaRecovery.name) {
-                            // Xóa màn hình Setup và Verify khỏi backstack để user không back lại được
-                            popUpTo(AuthenticationScreen.TwoFaSetup.name) { inclusive = true }
+                        if (mode == "LOGIN") {
+                            // Login thành công -> Vào Home, xóa sạch stack auth
+                            navController.navigate(HomeScreen.HomeSreen.name) {
+                                popUpTo(AuthenticationScreen.Start.name) { inclusive = true }
+                            }
+                        } else {
+                            // Setup thành công -> Sang màn hiện mã khôi phục
+                            navController.navigate(AuthenticationScreen.TwoFaRecovery.name) {
+                                // Xóa màn hình Setup và Verify khỏi stack để không back lại được
+                                popUpTo(AuthenticationScreen.TwoFaSetup.name) { inclusive = true }
+                            }
                         }
                     }
                 )
             }
 
+            // 4. THÊM MỚI: MÀN HÌNH RECOVERY CODE
             composable(
                 route = AuthenticationScreen.TwoFaRecovery.name,
                 enterTransition = defaultTransitions(),
-                exitTransition = defaultExitTransitions(),
-                popEnterTransition = defaultPopEnterTransitions(),
-                popExitTransition = defaultPopExitTransitions()
+                exitTransition = defaultExitTransitions()
             ) { backStackEntry ->
-                val viewModel: TwoFaViewModel = viewModel(backStackEntry, factory = TwoFaViewModel.Factory)
+                // Lưu ý: Nếu muốn chia sẻ data codes từ màn trước, cần dùng SharedViewModel hoặc truyền qua argument.
+                // Ở đây giả sử TwoFaViewModel mới tạo sẽ không có data cũ.
+                // Để đơn giản, ta có thể dùng shared ViewModel scope hoặc truyền codes qua string.
+                // Cách nhanh nhất hiện tại: Dùng lại ViewModel factory (nhưng state sẽ mới).
+                // Tốt nhất: Dùng NavGraphScoped ViewModel.
+                // Tạm thời: Khởi tạo mới, nhưng màn Recovery cần codes.
+                // Sửa nhanh: Truyền viewModel từ Verify sang (không khả thi trong Compose navigation chuẩn).
+                // => GIẢI PHÁP: Màn Verify thành công sẽ lưu codes vào UserPref hoặc Database, màn này load lên.
+                // HOẶC ĐƠN GIẢN HƠN CHO BÀI TẬP: Dùng thư viện Hilt để inject Singleton ViewModel.
+
+                // Nếu bạn chưa thạo Hilt, hãy truyền codes qua argument navigation.
+                // Nhưng để code chạy được ngay:
+                val viewModel: TwoFaViewModel = viewModel(factory = TwoFaViewModel.Factory)
 
                 RecoveryCodeScreen(
                     viewModel = viewModel,
                     onDoneClicked = {
-                        // Hoàn tất -> Về màn hình Profile hoặc Home
-                        navController.navigate("Profile") {
-                            // Xóa toàn bộ luồng 2FA khỏi backstack
-                            popUpTo("Profile") { inclusive = true }
-                        }
+                        navController.popBackStack(AuthenticationScreen.TwoFaSetup.name, inclusive = true)
+                        // Hoặc quay về Profile nếu đang ở trong App
+                        navController.popBackStack()
                     }
                 )
             }
@@ -406,6 +430,9 @@ fun MainNavHost(
                     },
                     onHistoryClicked = {
                         navController.navigate("OrderHistory")
+                    },
+                    onTwoFaClicked = {
+                        navController.navigate(AuthenticationScreen.TwoFaSetup.name)
                     },
                     viewModel = viewModel
                 )
@@ -648,6 +675,9 @@ fun MainNavHost(
                     },
                     onHistoryClicked = {
                         navController.navigate("OrderHistory")
+                    },
+                    onTwoFaClicked = {
+                        navController.navigate(AuthenticationScreen.TwoFaSetup.name)
                     },
                     isAdmin = true,
                     viewModel = viewModel

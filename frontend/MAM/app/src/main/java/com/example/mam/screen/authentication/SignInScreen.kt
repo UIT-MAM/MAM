@@ -67,6 +67,7 @@ fun SignInScreen(
     onSignInManager: () -> Unit = {},
     onForgotClicked: () -> Unit = {},
     onBackClicked: () -> Unit ={},
+    onTwoFaRequired: (String) -> Unit = {},
     viewModel: SignInViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {

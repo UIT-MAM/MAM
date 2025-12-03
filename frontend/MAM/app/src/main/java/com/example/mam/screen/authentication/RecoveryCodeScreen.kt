@@ -2,7 +2,6 @@ package com.example.mam.screen.authentication
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,7 +22,7 @@ import com.example.mam.component.CircleIconButton
 import com.example.mam.component.OuterShadowFilledButton
 import com.example.mam.ui.theme.OrangeDefault
 import com.example.mam.ui.theme.WhiteDefault
-import com.example.mam.viewmodel.twofa.TwoFaViewModel
+import com.example.mam.viewmodel.authentication.TwoFaViewModel
 
 @Composable
 fun RecoveryCodeScreen(
