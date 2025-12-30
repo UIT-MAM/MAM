@@ -35,7 +35,8 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public Cart create(Cart cart) {
-    if (cartRepository.existsByUserId(cart.getUser().getId())) {
+    if (cart.getUser() != null && cart.getUser().getId() != null &&
+            cartRepository.existsByUserId(cart.getUser().getId())) {
       Map<String, String> errorDetails = new HashMap<>();
       errorDetails.put("userId", "User already has a cart");
       throw new DataConflictException(errorDetails);

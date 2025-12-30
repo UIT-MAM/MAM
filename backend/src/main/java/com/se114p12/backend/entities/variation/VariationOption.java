@@ -13,7 +13,7 @@ import lombok.Data;
 @Entity
 @Table(name = "variation_options")
 public class VariationOption extends BaseEntity {
-  @Column(nullable = false, length = 255)
+  @Column(nullable = false, length = 255, name = "option_value")
   @NotNull
   private String value;
 
