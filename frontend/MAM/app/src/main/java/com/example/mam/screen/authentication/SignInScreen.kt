@@ -267,71 +267,71 @@ fun SignInScreen(
                     .height(40.dp),
             )
 
-            OuterShadowFilledButton(
-                text = "Đăng nhập với Google",
-                onClick = {
-                    viewModel.triggerLoading()
-                   GoogleSignInUtils.getGoogleIdToken(
-                        context = context,
-                        scope = scope,
-                        launcher = launcher,
-                        timeout = {
-                            viewModel.resetLoading()
-                        },
-                        handle = { idToken ->
-                            scope.launch {
-                                val message = viewModel.signInWithFirebase(idToken)
-                                if (message.first == "USER" && message.second == "ACTIVE") {
-                                    Toast.makeText(
-                                        context,
-                                        "Đăng nhập thành công",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    onSignInClicked()
-
-                                } else if (message.first == "ADMIN" && message.second == "ACTIVE") {
-                                    Toast.makeText(
-                                        context,
-                                        "Đăng nhập thành công",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    onSignInManager()
-                                } else if (message.second == "DELETED") {
-                                    Toast.makeText(
-                                        context,
-                                        "Tài khoản của bạn đã bị xóa",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    isShowDeletedDialog = true
-                                } else if (message.second == "BLOCKED") {
-                                    Toast.makeText(
-                                        context,
-                                        "Tài khoản của bạn đã bị khóa",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    isShowBlockedDialog = true
-                                } else if (message.second == "PENDING") {
-                                    isShowPendingDialog = true
-                                }
-                                else {
-                                    Toast.makeText(
-                                        context,
-                                        message.second,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }
-
-                    )
-                },
-                color = WhiteDefault,
-                textColor = BrownDefault,
-                image = R.drawable.ic_google,
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(40.dp),
-            )
+//            OuterShadowFilledButton(
+//                text = "Đăng nhập với Google",
+//                onClick = {
+//                    viewModel.triggerLoading()
+//                   GoogleSignInUtils.getGoogleIdToken(
+//                        context = context,
+//                        scope = scope,
+//                        launcher = launcher,
+//                        timeout = {
+//                            viewModel.resetLoading()
+//                        },
+//                        handle = { idToken ->
+//                            scope.launch {
+//                                val message = viewModel.signInWithFirebase(idToken)
+//                                if (message.first == "USER" && message.second == "ACTIVE") {
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Đăng nhập thành công",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                    onSignInClicked()
+//
+//                                } else if (message.first == "ADMIN" && message.second == "ACTIVE") {
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Đăng nhập thành công",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                    onSignInManager()
+//                                } else if (message.second == "DELETED") {
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Tài khoản của bạn đã bị xóa",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                    isShowDeletedDialog = true
+//                                } else if (message.second == "BLOCKED") {
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Tài khoản của bạn đã bị khóa",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                    isShowBlockedDialog = true
+//                                } else if (message.second == "PENDING") {
+//                                    isShowPendingDialog = true
+//                                }
+//                                else {
+//                                    Toast.makeText(
+//                                        context,
+//                                        message.second,
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                }
+//                            }
+//                        }
+//
+//                    )
+//                },
+//                color = WhiteDefault,
+//                textColor = BrownDefault,
+//                image = R.drawable.ic_google,
+//                modifier = Modifier
+//                    .fillMaxWidth(0.7f)
+//                    .height(40.dp),
+//            )
             Spacer(Modifier.height(10.dp))
         }
     }

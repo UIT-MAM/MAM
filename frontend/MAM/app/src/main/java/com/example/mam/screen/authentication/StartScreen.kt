@@ -43,6 +43,7 @@ import com.example.mam.component.LoadingAlertDialog
 import com.example.mam.component.OuterShadowFilledButton
 import com.example.mam.component.SignUpDialog
 import com.example.mam.component.UnderlinedClickableText
+import com.example.mam.component.UnderlinedClickableText2
 import com.example.mam.component.outerShadow
 import com.example.mam.ui.theme.BrownDefault
 import com.example.mam.ui.theme.GreyDark
@@ -120,48 +121,48 @@ fun StartScreen(
             //.padding(WindowInsets.ime.asPaddingValues())
     ) {
 
-        if (isGoogleRegister) {
-            SignUpDialog(
-                title = "Đăng ký qua Google",
-                message = "Nhập số điện thoại của bạn để đăng ký tài khoản",
-                viewModel = viewModel,
-                onDismiss = { isGoogleRegister = false },
-                onConfirm = {
-                    viewModel.triggerLoading()
-                    GoogleSignInUtils.getGoogleIdToken(
-                        context = context,
-                        scope = scope,
-                        launcher = launcher,
-                        timeout = {
-                            isGoogleRegister = false
-                            viewModel.resetLoading()
-                        },
-                        handle = { token ->
-                            idToken = token
-                            scope.launch {
-                                val result = viewModel.RegisterWithFireBase(idToken)
-                                if (result == 1) {
-                                    onGGSignUpClicked()
-                                    Toast.makeText(
-                                        context,
-                                        "Đăng ký thành công",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    onSignInClicked()
-                                    isGoogleRegister = false
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Đăng ký thất bại",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }
-                    )
-                },
-            )
-        }
+//        if (isGoogleRegister) {
+//            SignUpDialog(
+//                title = "Đăng ký qua Google",
+//                message = "Nhập số điện thoại của bạn để đăng ký tài khoản",
+//                viewModel = viewModel,
+//                onDismiss = { isGoogleRegister = false },
+//                onConfirm = {
+//                    viewModel.triggerLoading()
+//                    GoogleSignInUtils.getGoogleIdToken(
+//                        context = context,
+//                        scope = scope,
+//                        launcher = launcher,
+//                        timeout = {
+//                            isGoogleRegister = false
+//                            viewModel.resetLoading()
+//                        },
+//                        handle = { token ->
+//                            idToken = token
+//                            scope.launch {
+//                                val result = viewModel.RegisterWithFireBase(idToken)
+//                                if (result == 1) {
+//                                    onGGSignUpClicked()
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Đăng ký thành công",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                    onSignInClicked()
+//                                    isGoogleRegister = false
+//                                } else {
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Đăng ký thất bại",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                }
+//                            }
+//                        }
+//                    )
+//                },
+//            )
+//        }
         Image(
             painter = painterResource(id = R.drawable.ic_mam_foreground),
             contentDescription = null,
@@ -202,34 +203,40 @@ fun StartScreen(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
             ) {
-                OuterShadowFilledButton(
-                    text = "Đăng ký qua Google",
-                    image = R.drawable.ic_google,
-                    color = WhiteDefault,
-                    textColor = BrownDefault,
-                    onClick = {
-                        isGoogleRegister =true
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                )
-                HorizontalDivider(
-                    color = BrownDefault,
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f),
-                )
+//                OuterShadowFilledButton(
+//                    text = "Đăng ký qua Google",
+//                    image = R.drawable.ic_google,
+//                    color = WhiteDefault,
+//                    textColor = BrownDefault,
+//                    onClick = {
+//                        isGoogleRegister =true
+//                    },
+//                    modifier = Modifier
+//                        .fillMaxWidth(0.8f)
+//                )
+//                HorizontalDivider(
+//                    color = BrownDefault,
+//                    modifier = Modifier
+//                        .fillMaxWidth(0.8f),
+//                )
                 OuterShadowFilledButton(
                     text = "Đăng ký",
                     onClick = onSignUpClicked,
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
                 )
-                UnderlinedClickableText(
+//                UnderlinedClickableText(
+//                    text = "Bạn đã có tài khoản? ",
+//                    link = "Đăng nhập ngay",
+//                    linkColor = OrangeDefault,
+//                    onClick = onSignInClicked,
+//                    modifier = Modifier.padding(0.dp)
+//                )
+                UnderlinedClickableText2(
                     text = "Bạn đã có tài khoản? ",
                     link = "Đăng nhập ngay",
                     linkColor = OrangeDefault,
                     onClick = onSignInClicked,
-                    modifier = Modifier.padding(0.dp)
                 )
             }
             UnderlinedClickableText(

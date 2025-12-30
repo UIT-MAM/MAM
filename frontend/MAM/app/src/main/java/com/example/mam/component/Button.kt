@@ -45,6 +45,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +60,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.SemanticsProperties.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -86,6 +92,34 @@ import com.example.mam.R
 import com.example.mam.dto.product.ProductResponse
 import com.example.mam.dto.variation.VariationOptionRequest
 import com.example.mam.dto.variation.VariationOptionResponse
+import com.mapbox.maps.extension.style.expressions.dsl.generated.id
+
+@Composable
+fun UnderlinedClickableText2(
+    text: String,
+    link: String,
+    onClick: () -> Unit,
+    color: Color = BrownDefault,
+    linkColor: Color = OrangeDefault,
+) {
+    Row {
+        Text(text = text, color = color)
+        Spacer(Modifier.width(6.dp))
+        TextButton(
+            onClick = onClick,
+            modifier = Modifier.semantics {
+                contentDescription = "login_now"
+            }
+        ) {
+            Text(
+                text = link,
+                color = linkColor,
+                textDecoration = TextDecoration.Underline,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
 
 @Composable
 fun UnderlinedClickableText(
@@ -102,7 +136,7 @@ fun UnderlinedClickableText(
         }
         append("   ")
         // Đánh dấu phần cần click
-        pushStringAnnotation(tag = "CLICK", annotation = "clicked")
+        pushStringAnnotation(tag = "CLICK", annotation = "clicked",)
         withStyle(style = SpanStyle(
             color = linkColor,
             textDecoration = TextDecoration.Underline,
@@ -116,18 +150,13 @@ fun UnderlinedClickableText(
 
     ClickableText(
         text = annotatedText,
-        style = TextStyle(
-            textAlign = TextAlign.Center),
+        style = TextStyle( textAlign = TextAlign.Center),
         onClick = { offset ->
             annotatedText.getStringAnnotations(tag = "CLICK", start = offset, end = offset)
-                .firstOrNull()?.let {
-                    onClick()
-                }
-        },
-        modifier = modifier
-
-        // style mặc định cho đoạn text
+                .firstOrNull()?.let { onClick() } },
+        modifier = modifier // style mặc định cho đoạn text
     )
+
 }
 
 @Composable
