@@ -11,6 +11,8 @@ public interface VerificationService {
 
   String createOtpVerification(Long userId, OTPAction action);
 
+  Verification createTwoFactorVerification(Long userId);
+
   Verification verifyVerificationCode(String code, VerificationType type);
 
   void deleteVerification(Verification verification);

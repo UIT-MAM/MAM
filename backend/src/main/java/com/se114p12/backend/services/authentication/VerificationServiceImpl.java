@@ -42,6 +42,12 @@ public class VerificationServiceImpl implements VerificationService {
   }
 
   @Override
+  public Verification createTwoFactorVerification(Long userId) {
+    return createVerification(
+        userId, VerificationType.TWO_FACTOR, UUID.randomUUID().toString(), OTP_EXPIRATION_TIME);
+  }
+
+  @Override
   public String createOtpVerification(Long userId, OTPAction action) {
     String otpCode = OtpGenerator.generateOtp();
     String verificationCode = otpCode + "_" + action.name();

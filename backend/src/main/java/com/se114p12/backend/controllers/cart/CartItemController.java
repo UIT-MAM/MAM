@@ -73,7 +73,7 @@ public class CartItemController {
     @ErrorResponse
     @PutMapping("/{id}")
     public ResponseEntity<CartItemResponseDTO> updateCartItem(
-            @Parameter(description = "ID of the cart item to update") @PathVariable Long id,
+            @Parameter(description = "ID of the cart item to update") @PathVariable("id") Long id,
             @Valid @RequestBody CartItemRequestDTO dto) {
         return ResponseEntity.ok(cartItemService.updateCartItem(id, dto));
     }
@@ -89,7 +89,7 @@ public class CartItemController {
     @ErrorResponse
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCartItem(
-            @Parameter(description = "ID of the cart item to delete") @PathVariable Long id) {
+            @Parameter(description = "ID of the cart item to delete") @PathVariable("id") Long id) {
         cartItemService.deleteCartItem(id);
         return ResponseEntity.noContent().build();
     }

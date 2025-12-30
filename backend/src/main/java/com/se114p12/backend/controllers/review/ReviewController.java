@@ -45,7 +45,7 @@ public class ReviewController {
     })
     @ErrorResponse
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<ReviewResponseDTO> getReviewsByOrder(@PathVariable Long orderId) {
+    public ResponseEntity<ReviewResponseDTO> getReviewsByOrder(@PathVariable("orderId") Long orderId) {
         return ResponseEntity.ok(reviewService.getReviewsByOrder(orderId));
     }
 
@@ -58,7 +58,7 @@ public class ReviewController {
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{reviewId}/reply")
     public ResponseEntity<ReviewResponseDTO> replyToReview(
-            @PathVariable Long reviewId,
+            @PathVariable("reviewId") Long reviewId,
             @RequestParam String reply
     ) {
         return ResponseEntity.ok(reviewService.replyToReview(reviewId, reply));
@@ -83,7 +83,7 @@ public class ReviewController {
     @ErrorResponse
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponseDTO> updateReview(
-            @PathVariable Long reviewId,
+            @PathVariable("reviewId") Long reviewId,
             @Valid @RequestBody ReviewRequestDTO request
     ) {
         return ResponseEntity.ok(reviewService.updateReview(reviewId, request));
@@ -96,7 +96,7 @@ public class ReviewController {
     })
     @ErrorResponse
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
+    public ResponseEntity<Void> deleteReview(@PathVariable("reviewId") Long reviewId) {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.noContent().build();
     }

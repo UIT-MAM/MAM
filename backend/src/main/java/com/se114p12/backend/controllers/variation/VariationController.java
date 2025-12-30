@@ -73,7 +73,7 @@ public class VariationController {
   @PutMapping("/{id}")
   public ResponseEntity<VariationResponseDTO> updateVariation(
           @Parameter(description = "ID of the variation to update", required = true)
-          @PathVariable Long id,
+          @PathVariable("id") Long id,
 
           @Valid @RequestBody VariationRequestDTO dto
   ) {
@@ -89,7 +89,7 @@ public class VariationController {
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteVariation(
           @Parameter(description = "ID of the variation to delete", required = true)
-          @PathVariable Long id
+          @PathVariable("id") Long id
   ) {
     variationService.delete(id);
     return ResponseEntity.noContent().build();

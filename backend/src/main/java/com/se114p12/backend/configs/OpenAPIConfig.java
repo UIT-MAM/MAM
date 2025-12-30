@@ -34,8 +34,8 @@ public class OpenAPIConfig {
         .info(createInfo())
         .addServersItem(localServer)
         .addServersItem(remoteServer)
-        .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+        .addSecurityItem(new SecurityRequirement().addList("BearerAuthentication"))
         .components(
-            new Components().addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()));
+            new Components().addSecuritySchemes("BearerAuthentication", createAPIKeyScheme()));
   }
 }
